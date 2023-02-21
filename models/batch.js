@@ -8,6 +8,7 @@ const batchSchema = new mongoose.Schema(
     barcode: String,
     cantitate: String,
     statusCurent: String,
+    lotFurnizor: String,
     cuptor: String,
     statusuri: Object,
   },

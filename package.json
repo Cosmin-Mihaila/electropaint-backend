@@ -11,7 +11,10 @@
   "dependencies": {
     "body-parser": "^1.20.1",
     "cors": "^2.8.5",
+    "docxtemplater": "^3.34.1",
     "express": "^4.18.2",
-    "mongoose": "^6.9.2"
+    "moment": "^2.29.4",
+    "mongoose": "^6.9.2",
+    "pizzip": "^3.1.4"
   }
 }

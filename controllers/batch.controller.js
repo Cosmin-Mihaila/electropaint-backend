@@ -1,5 +1,212 @@
 const Batch = require("../models/batch");
 const Oven = require("../models/oven");
+const PizZip = require("pizzip");
+const Docxtemplater = require("docxtemplater");
+var moment = require("moment");
+const fs = require("fs");
+const path = require("path");
+
+const clientiVechi2 = [
+  {
+    client_ID: "62",
+    client_name: "poarta m3",
+    client_city: "targoviste",
+    client_adress: "str leo planga nr 9",
+    client_advance_paid: "1",
+    client_delivered: "1",
+    client_delivery_time: "2021-10-14",
+    client_advance: "4000 ron, tva inclus",
+    client_final_invoice_paid: "0",
+    client_final_invoice: "4500 ron, tva inclus",
+    client_measured: "1",
+    client_painted: "1",
+    client_drawn: "1",
+    client_cut: "1",
+    client_final_invoice_file: "",
+    client_phone: "9767183722",
+    client_email: "",
+    client_contract: "1028",
+    client_transport: "",
+    client_invoice_name: "DARMAZ ELISEI",
+    client_invoice_adress: "STRADA LEO PLANGA  , NR 9, TARGOVISTE, DAMBOVITA",
+    client_invoice_details: "CNP: 1890107152477",
+    client_advance_file:
+      "/home/showmine/www_panouri-decorative-eu/wp-content/uploads/62/factura/AVANS DARMAZ ELISEI.pdf",
+    client_measure_cost: "",
+    client_delivery_cost: "",
+    client_fitting_cost: "",
+    client_products_cost: "",
+    client_advance_percentage: "",
+    client_type_mdf: "0",
+    client_type_tabla: "0",
+  },
+  {
+    client_ID: "72",
+    client_name: "BALUSTRADA FETESTI",
+    client_city: "VLADENI, JUD IALOMITA",
+    client_adress: "",
+    client_advance_paid: "1",
+    client_delivered: "1",
+    client_delivery_time: "2021-11-04",
+    client_advance: "600 EURO+TVA",
+    client_final_invoice_paid: "0",
+    client_final_invoice: "849 EURO+TVA",
+    client_measured: "1",
+    client_painted: "1",
+    client_drawn: "1",
+    client_cut: "1",
+    client_final_invoice_file: "",
+    client_phone: "",
+    client_email: "",
+    client_contract: "1036",
+    client_transport: "",
+    client_invoice_name: "DUMITRU IONEL",
+    client_invoice_adress:
+      "STRADA MIHAI VITEAZUL NR 50 , COMUNA VLADENI, IALOMITA",
+    client_invoice_details: "CNP 1790903211683",
+    client_advance_file: "",
+    client_measure_cost: "",
+    client_delivery_cost: "",
+    client_fitting_cost: "",
+    client_products_cost: "",
+    client_advance_percentage: "",
+    client_type_mdf: "0",
+    client_type_tabla: "0",
+  },
+  {
+    client_ID: "73",
+    client_name: "balustrada chiajna 3",
+    client_city: "chiajna",
+    client_adress: "strada luceafarului nr 20, chiajna",
+    client_advance_paid: "1",
+    client_delivered: "1",
+    client_delivery_time: "2021-11-10",
+    client_advance: "460 euro+tva",
+    client_final_invoice_paid: "0",
+    client_final_invoice: "4 062",
+    client_measured: "1",
+    client_painted: "1",
+    client_drawn: "1",
+    client_cut: "1",
+    client_final_invoice_file: "",
+    client_phone: "0720920448",
+    client_email: "",
+    client_contract: "1037",
+    client_transport: "",
+    client_invoice_name: "VIJALIE MARIUS-ADRIAN",
+    client_invoice_adress:
+      "MUNICIPIUL BUCURESTI, SECTOR 6, STRADA GHIRLANDEI NR 52, BLOC 77, SCARA 2, ETAJ 2, AP 32",
+    client_invoice_details: "CNP 1890310460031",
+    client_advance_file:
+      "/home/showmine/www_panouri-decorative-eu/wp-content/uploads/73/factura/AVANS VIJALIE MARIUS-ADRIAN.pdf",
+    client_measure_cost: "",
+    client_delivery_cost: "",
+    client_fitting_cost: "",
+    client_products_cost: "",
+    client_advance_percentage: "",
+    client_type_mdf: "1",
+    client_type_tabla: "1",
+  },
+  {
+    client_ID: "44",
+    client_name: "balcon rotund popesti leordeni",
+    client_city: "bucuresti",
+    client_adress: "",
+    client_advance_paid: "1",
+    client_delivered: "1",
+    client_delivery_time: "2021-08-28",
+    client_advance: "2000 ron, tva inclus",
+    client_final_invoice_paid: "0",
+    client_final_invoice: "2000 ron, tva inclus",
+    client_measured: "1",
+    client_painted: "1",
+    client_drawn: "1",
+    client_cut: "1",
+    client_final_invoice_file: "",
+    client_phone: "0722918444",
+    client_email: "",
+    client_contract: "1014",
+    client_transport: "",
+    client_invoice_name: "GM WORLD DISTRIBUTION SRL",
+    client_invoice_adress:
+      "MUNICIPIUL BUCURESTI, SECTOR 3, SOS MIHAI BRAVU NR 309, BLOC R3, SCARA C, ETAJ 8, AP 118",
+    client_invoice_details: "RO33933073",
+    client_advance_file: "",
+    client_measure_cost: "",
+    client_delivery_cost: "",
+    client_fitting_cost: "",
+    client_products_cost: "",
+    client_advance_percentage: "",
+    client_type_mdf: "0",
+    client_type_tabla: "0",
+  },
+  {
+    client_ID: "34",
+    client_name: "balustrada moreni 1307",
+    client_city: "moreni",
+    client_adress: "strada principala",
+    client_advance_paid: "1",
+    client_delivered: "1",
+    client_delivery_time: "2021-08-12",
+    client_advance: "250 euro, tva inclus",
+    client_final_invoice_paid: "0",
+    client_final_invoice: "500 euro, tva inclus",
+    client_measured: "1",
+    client_painted: "1",
+    client_drawn: "1",
+    client_cut: "1",
+    client_final_invoice_file: "",
+    client_phone: "",
+    client_email: "",
+    client_contract: "1003",
+    client_transport: "",
+    client_invoice_name: "",
+    client_invoice_adress: "",
+    client_invoice_details: "",
+    client_advance_file: "",
+    client_measure_cost: "",
+    client_delivery_cost: "",
+    client_fitting_cost: "",
+    client_products_cost: "",
+    client_advance_percentage: "",
+    client_type_mdf: "0",
+    client_type_tabla: "0",
+  },
+  {
+    client_ID: "46",
+    client_name: "masti calorifer 4 buc",
+    client_city: "bolintin vale",
+    client_adress: "",
+    client_advance_paid: "1",
+    client_delivered: "1",
+    client_delivery_time: "2021-09-07",
+    client_advance: "1500 ron, tva inclus",
+    client_final_invoice_paid: "0",
+    client_final_invoice: "1500 ron, tva inclus",
+    client_measured: "1",
+    client_painted: "1",
+    client_drawn: "1",
+    client_cut: "1",
+    client_final_invoice_file: "",
+    client_phone: "0763503168",
+    client_email: "",
+    client_contract: "1016",
+    client_transport: "",
+    client_invoice_name: "DUMITRU CONSTANTIN",
+    client_invoice_adress:
+      "Comuna Floresti Stoinesti, sat Palanca, strada Avarului nr 19",
+    client_invoice_details: "CNP: 1860521521695",
+    client_advance_file:
+      "/home/showmine/www_panouri-decorative-eu/wp-content/uploads/46/factura/FACTURA DUMITRU CONSTANTIN.pdf",
+    client_measure_cost: "",
+    client_delivery_cost: "",
+    client_fitting_cost: "",
+    client_products_cost: "",
+    client_advance_percentage: "",
+    client_type_mdf: "0",
+    client_type_tabla: "0",
+  },
+];
 
 const clientiVechi = [
   {
@@ -330,38 +537,6 @@ const clientiVechi = [
     client_type_tabla: "0",
   },
   {
-    client_ID: "34",
-    client_name: "balustrada moreni 1307",
-    client_city: "moreni",
-    client_adress: "strada principala",
-    client_advance_paid: "1",
-    client_delivered: "1",
-    client_delivery_time: "2021-08-12",
-    client_advance: "250 euro, tva inclus",
-    client_final_invoice_paid: "0",
-    client_final_invoice: "500 euro, tva inclus",
-    client_measured: "1",
-    client_painted: "1",
-    client_drawn: "1",
-    client_cut: "1",
-    client_final_invoice_file: "",
-    client_phone: "",
-    client_email: "",
-    client_contract: "1003",
-    client_transport: "",
-    client_invoice_name: "",
-    client_invoice_adress: "",
-    client_invoice_details: "",
-    client_advance_file: "",
-    client_measure_cost: "",
-    client_delivery_cost: "",
-    client_fitting_cost: "",
-    client_products_cost: "",
-    client_advance_percentage: "",
-    client_type_mdf: "0",
-    client_type_tabla: "0",
-  },
-  {
     client_ID: "35",
     client_name: "visina 1203",
     client_city: "visina , str targului nr 8",
@@ -659,39 +834,6 @@ const clientiVechi = [
     client_type_tabla: "0",
   },
   {
-    client_ID: "44",
-    client_name: "balcon rotund popesti leordeni",
-    client_city: "bucuresti",
-    client_adress: "",
-    client_advance_paid: "1",
-    client_delivered: "1",
-    client_delivery_time: "2021-08-28",
-    client_advance: "2000 ron, tva inclus",
-    client_final_invoice_paid: "0",
-    client_final_invoice: "2000 ron, tva inclus",
-    client_measured: "1",
-    client_painted: "1",
-    client_drawn: "1",
-    client_cut: "1",
-    client_final_invoice_file: "",
-    client_phone: "0722918444",
-    client_email: "",
-    client_contract: "1014",
-    client_transport: "",
-    client_invoice_name: "GM WORLD DISTRIBUTION SRL",
-    client_invoice_adress:
-      "MUNICIPIUL BUCURESTI, SECTOR 3, SOS MIHAI BRAVU NR 309, BLOC R3, SCARA C, ETAJ 8, AP 118",
-    client_invoice_details: "RO33933073",
-    client_advance_file: "",
-    client_measure_cost: "",
-    client_delivery_cost: "",
-    client_fitting_cost: "",
-    client_products_cost: "",
-    client_advance_percentage: "",
-    client_type_mdf: "0",
-    client_type_tabla: "0",
-  },
-  {
     client_ID: "45",
     client_name: "panou valeni de munte",
     client_city: "valenii de munte",
@@ -716,40 +858,6 @@ const clientiVechi = [
     client_invoice_adress: "VALENII DE MUNTE, STRADA CLOACA NR 5, PRAHOVA",
     client_invoice_details: "",
     client_advance_file: "",
-    client_measure_cost: "",
-    client_delivery_cost: "",
-    client_fitting_cost: "",
-    client_products_cost: "",
-    client_advance_percentage: "",
-    client_type_mdf: "0",
-    client_type_tabla: "0",
-  },
-  {
-    client_ID: "46",
-    client_name: "masti calorifer 4 buc",
-    client_city: "bolintin vale",
-    client_adress: "",
-    client_advance_paid: "1",
-    client_delivered: "1",
-    client_delivery_time: "2021-09-07",
-    client_advance: "1500 ron, tva inclus",
-    client_final_invoice_paid: "0",
-    client_final_invoice: "1500 ron, tva inclus",
-    client_measured: "1",
-    client_painted: "1",
-    client_drawn: "1",
-    client_cut: "1",
-    client_final_invoice_file: "",
-    client_phone: "0763503168",
-    client_email: "",
-    client_contract: "1016",
-    client_transport: "",
-    client_invoice_name: "DUMITRU CONSTANTIN",
-    client_invoice_adress:
-      "Comuna Floresti Stoinesti, sat Palanca, strada Avarului nr 19",
-    client_invoice_details: "CNP: 1860521521695",
-    client_advance_file:
-      "/home/showmine/www_panouri-decorative-eu/wp-content/uploads/46/factura/FACTURA DUMITRU CONSTANTIN.pdf",
     client_measure_cost: "",
     client_delivery_cost: "",
     client_fitting_cost: "",
@@ -1193,39 +1301,6 @@ const clientiVechi = [
     client_type_tabla: "0",
   },
   {
-    client_ID: "62",
-    client_name: "poarta m3",
-    client_city: "targoviste",
-    client_adress: "str leo planga nr 9",
-    client_advance_paid: "1",
-    client_delivered: "1",
-    client_delivery_time: "2021-10-14",
-    client_advance: "4000 ron, tva inclus",
-    client_final_invoice_paid: "0",
-    client_final_invoice: "4500 ron, tva inclus",
-    client_measured: "1",
-    client_painted: "1",
-    client_drawn: "1",
-    client_cut: "1",
-    client_final_invoice_file: "",
-    client_phone: "9767183722",
-    client_email: "",
-    client_contract: "1028",
-    client_transport: "",
-    client_invoice_name: "DARMAZ ELISEI",
-    client_invoice_adress: "STRADA LEO PLANGA  , NR 9, TARGOVISTE, DAMBOVITA",
-    client_invoice_details: "CNP: 1890107152477",
-    client_advance_file:
-      "/home/showmine/www_panouri-decorative-eu/wp-content/uploads/62/factura/AVANS DARMAZ ELISEI.pdf",
-    client_measure_cost: "",
-    client_delivery_cost: "",
-    client_fitting_cost: "",
-    client_products_cost: "",
-    client_advance_percentage: "",
-    client_type_mdf: "0",
-    client_type_tabla: "0",
-  },
-  {
     client_ID: "63",
     client_name: "balustrada dragomiresti vale",
     client_city: "dragomiresti vale",
@@ -1525,73 +1600,6 @@ const clientiVechi = [
     client_products_cost: "",
     client_advance_percentage: "",
     client_type_mdf: "0",
-    client_type_tabla: "1",
-  },
-  {
-    client_ID: "72",
-    client_name: "BALUSTRADA FETESTI",
-    client_city: "VLADENI, JUD IALOMITA",
-    client_adress: "",
-    client_advance_paid: "1",
-    client_delivered: "1",
-    client_delivery_time: "2021-11-04",
-    client_advance: "600 EURO+TVA",
-    client_final_invoice_paid: "0",
-    client_final_invoice: "849 EURO+TVA",
-    client_measured: "1",
-    client_painted: "1",
-    client_drawn: "1",
-    client_cut: "1",
-    client_final_invoice_file: "",
-    client_phone: "",
-    client_email: "",
-    client_contract: "1036",
-    client_transport: "",
-    client_invoice_name: "DUMITRU IONEL",
-    client_invoice_adress:
-      "STRADA MIHAI VITEAZUL NR 50 , COMUNA VLADENI, IALOMITA",
-    client_invoice_details: "CNP 1790903211683",
-    client_advance_file: "",
-    client_measure_cost: "",
-    client_delivery_cost: "",
-    client_fitting_cost: "",
-    client_products_cost: "",
-    client_advance_percentage: "",
-    client_type_mdf: "0",
-    client_type_tabla: "0",
-  },
-  {
-    client_ID: "73",
-    client_name: "balustrada chiajna 3",
-    client_city: "chiajna",
-    client_adress: "strada luceafarului nr 20, chiajna",
-    client_advance_paid: "1",
-    client_delivered: "1",
-    client_delivery_time: "2021-11-10",
-    client_advance: "460 euro+tva",
-    client_final_invoice_paid: "0",
-    client_final_invoice: "4 062",
-    client_measured: "1",
-    client_painted: "1",
-    client_drawn: "1",
-    client_cut: "1",
-    client_final_invoice_file: "",
-    client_phone: "0720920448",
-    client_email: "",
-    client_contract: "1037",
-    client_transport: "",
-    client_invoice_name: "VIJALIE MARIUS-ADRIAN",
-    client_invoice_adress:
-      "MUNICIPIUL BUCURESTI, SECTOR 6, STRADA GHIRLANDEI NR 52, BLOC 77, SCARA 2, ETAJ 2, AP 32",
-    client_invoice_details: "CNP 1890310460031",
-    client_advance_file:
-      "/home/showmine/www_panouri-decorative-eu/wp-content/uploads/73/factura/AVANS VIJALIE MARIUS-ADRIAN.pdf",
-    client_measure_cost: "",
-    client_delivery_cost: "",
-    client_fitting_cost: "",
-    client_products_cost: "",
-    client_advance_percentage: "",
-    client_type_mdf: "1",
     client_type_tabla: "1",
   },
   {
@@ -6273,7 +6281,7 @@ const clientiVechi = [
     client_adress: "bihor",
     client_advance_paid: "0",
     client_delivered: "0",
-    client_delivery_time: "0000-00-00",
+    client_delivery_time: "2023-01-10",
     client_advance: "",
     client_final_invoice_paid: "0",
     client_final_invoice: "",
@@ -6305,7 +6313,7 @@ const clientiVechi = [
     client_adress: "",
     client_advance_paid: "0",
     client_delivered: "0",
-    client_delivery_time: "0000-00-00",
+    client_delivery_time: "2023-01-12",
     client_advance: "",
     client_final_invoice_paid: "0",
     client_final_invoice: "",
@@ -6337,7 +6345,7 @@ const clientiVechi = [
     client_adress: "",
     client_advance_paid: "0",
     client_delivered: "0",
-    client_delivery_time: "0000-00-00",
+    client_delivery_time: "2023-01-23",
     client_advance: "",
     client_final_invoice_paid: "0",
     client_final_invoice: "",
@@ -6370,7 +6378,7 @@ const clientiVechi = [
     client_adress: "chiajna",
     client_advance_paid: "0",
     client_delivered: "0",
-    client_delivery_time: "0000-00-00",
+    client_delivery_time: "2023-01-26",
     client_advance: "",
     client_final_invoice_paid: "0",
     client_final_invoice: "",
@@ -6403,7 +6411,7 @@ const clientiVechi = [
     client_adress: "buzau",
     client_advance_paid: "0",
     client_delivered: "0",
-    client_delivery_time: "0000-00-00",
+    client_delivery_time: "2023-01-30",
     client_advance: "",
     client_final_invoice_paid: "0",
     client_final_invoice: "",
@@ -6435,7 +6443,7 @@ const clientiVechi = [
     client_adress: "moroieni, strada mocani, nr 14",
     client_advance_paid: "0",
     client_delivered: "0",
-    client_delivery_time: "0000-00-00",
+    client_delivery_time: "2023-02-03",
     client_advance: "",
     client_final_invoice_paid: "0",
     client_final_invoice: "",
@@ -6468,7 +6476,7 @@ const clientiVechi = [
     client_adress: "str castanilor 32",
     client_advance_paid: "0",
     client_delivered: "0",
-    client_delivery_time: "0000-00-00",
+    client_delivery_time: "2023-02-05",
     client_advance: "",
     client_final_invoice_paid: "0",
     client_final_invoice: "",
@@ -6500,7 +6508,7 @@ const clientiVechi = [
     client_adress: "",
     client_advance_paid: "0",
     client_delivered: "0",
-    client_delivery_time: "0000-00-00",
+    client_delivery_time: "2023-02-08",
     client_advance: "",
     client_final_invoice_paid: "0",
     client_final_invoice: "",
@@ -6533,7 +6541,7 @@ const clientiVechi = [
     client_adress: "",
     client_advance_paid: "0",
     client_delivered: "0",
-    client_delivery_time: "0000-00-00",
+    client_delivery_time: "2023-02-09",
     client_advance: "",
     client_final_invoice_paid: "0",
     client_final_invoice: "",
@@ -6560,6 +6568,53 @@ const clientiVechi = [
     client_type_tabla: "1",
   },
 ];
+
+const generateFormularReceptie = async (req, res) => {
+  const batchId = req.params.id;
+  const bat = await Batch.findOne({ barcode: batchId });
+  // Load the docx file as binary content
+  const content = fs.readFileSync(
+    path.resolve(__dirname, "formular_receptie.docx"),
+    "binary"
+  );
+
+  const zip = new PizZip(content);
+
+  const doc = new Docxtemplater(zip, {
+    paragraphLoop: true,
+    linebreaks: true,
+  });
+
+  // Render the document (Replace {first_name} by John, {last_name} by Doe, ...)
+  var new_date = moment(bat.statusuri.primit.data, "YYYY-MM-DD")
+    .add(15, "days")
+    .format("YYYY-MM-DD");
+  doc.render({
+    furnizor: bat.numeCompanie,
+    data_receptie: bat.statusuri.primit.data,
+    aviz: bat.aviz ? bat.aviz : "-",
+    nume_produs: bat.numeProdus,
+    lot_furnizor: bat.lotFurnizor ? bat.lotFurnizor : "-",
+    cantitate: bat.cantitate,
+    termen_livrare: new_date,
+  });
+
+  const buf = doc.getZip().generate({
+    type: "nodebuffer",
+    // compression: DEFLATE adds a compression step.
+    // For a 50MB output document, expect 500ms additional CPU time
+    compression: "DEFLATE",
+  });
+
+  // buf is a nodejs Buffer, you can either write it to a
+  // file or res.send it with express for example.
+  fs.writeFileSync(
+    path.resolve(__dirname, "Formular_receptie_" + bat.barcode + ".docx"),
+    buf
+  );
+  const file = `${__dirname}/Formular_receptie_${bat.barcode}.docx`;
+  res.download(file);
+};
 
 const createBatch = async (req, res) => {
   const barcode =
@@ -6638,6 +6693,120 @@ const adaugaClientiVechi = async (req, res) => {
         },
       },
       statusCurent: "Expediat",
+    };
+    const currentUser = new Batch(user);
+    const resulte = await currentUser.save();
+  }
+
+  res.status(200).json({
+    message: "Success!",
+  });
+};
+
+const adaugaClientiVechi2 = async (req, res) => {
+  var raluri = ["7016", "9005", "9003", "8017", "7024"];
+  var i = 0;
+  for (i = 0; i < clientiVechi2.length; i++) {
+    const barcode =
+      Date.now() + "" + Math.floor(Math.random() * (999 - 100 + 1) + 100);
+    var item = raluri[Math.floor(Math.random() * raluri.length)];
+    var cantitat = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    var cantcor = cantitat[Math.floor(Math.random() * cantitat.length)];
+
+    var timpi = ["40 min", "50 min", "60 min", "70 min", "80 min"];
+    var timpcor = timpi[Math.floor(Math.random() * timpi.length)];
+    const user = {
+      numeCompanie: clientiVechi2[i].client_invoice_name
+        ? clientiVechi2[i].client_invoice_name
+        : clientiVechi2[i].client_name,
+      numeProdus: clientiVechi2[i].client_name,
+      ral: item,
+      cantitate: cantcor,
+      barcode: barcode,
+      statusuri: {
+        primit: {
+          aplicat: true,
+          data:
+            i == 0
+              ? "2023-02-20"
+              : i == 1
+              ? "2023-02-17"
+              : i == 2
+              ? "2023-02-16"
+              : i == 3
+              ? "2023-02-14"
+              : i == 4
+              ? "2023-02-14"
+              : "2023-02-13",
+          utilizator: "Admin",
+        },
+        prevopsit: {
+          aplicat:
+            i == 0
+              ? false
+              : i == 1
+              ? false
+              : i == 2
+              ? true
+              : i == 3
+              ? true
+              : i == 4
+              ? true
+              : true,
+          data: clientiVechi2[i].client_delivery_time,
+          utilizator: "Admin",
+        },
+        vopsit: {
+          aplicat:
+            i == 0
+              ? false
+              : i == 1
+              ? false
+              : i == 2
+              ? false
+              : i == 3
+              ? false
+              : i == 4
+              ? true
+              : true,
+          data: clientiVechi2[i].client_delivery_time,
+          durata: timpcor,
+          utilizator: "Admin",
+        },
+        controlat: {
+          aplicat:
+            i == 0
+              ? false
+              : i == 1
+              ? false
+              : i == 2
+              ? false
+              : i == 3
+              ? false
+              : i == 4
+              ? false
+              : true,
+          data: clientiVechi2[i].client_delivery_time,
+          utilizator: "Admin",
+        },
+        expediat: {
+          aplicat: false,
+          data: clientiVechi2[i].client_delivery_time,
+          utilizator: "Admin",
+        },
+      },
+      statusCurent:
+        i == 0
+          ? "Primit"
+          : i == 1
+          ? "Primit"
+          : i == 2
+          ? "Prevopsit"
+          : i == 3
+          ? "Prevopsit"
+          : i == 4
+          ? "Vopsit"
+          : "Controlat",
     };
     const currentUser = new Batch(user);
     const resulte = await currentUser.save();
@@ -6733,7 +6902,7 @@ const deleteBatch = async (req, res) => {
 };
 
 const deleteAll = async (req, res) => {
-  Batch.deleteMany({ barcode: 1676882871030930 }).then((batch) => {
+  Batch.deleteMany().then((batch) => {
     if (batch) {
       res.status(200).json({
         batches: "Found!",
@@ -6755,4 +6924,6 @@ module.exports = {
   updateBatch,
   adaugaClientiVechi,
   deleteAll,
+  adaugaClientiVechi2,
+  generateFormularReceptie,
 };
