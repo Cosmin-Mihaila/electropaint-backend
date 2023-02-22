@@ -30,6 +30,6 @@ app.use("/api/batch", batchRouter);
 app.use("/api/paint", paintRouter);
 app.use("/api/oven", ovenRouter);
 
-app.listen(8081, function () {
+app.listen(process.env.PORT || 8081, function () {
   console.log("Example app listening on port 8081!");
 });
