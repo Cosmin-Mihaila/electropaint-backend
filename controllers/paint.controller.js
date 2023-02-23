@@ -70,9 +70,118 @@ const createPaint = async (req, res) => {
   });
 };
 
+const createOldPaint = async (req, res) => {
+  const furnizori = [
+    "FABRYO CORPORATION SRL",
+    "JOTUN ROMANIA SRL",
+    "JOTUN ROMANIA SRL",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+    "NEOKEM ROMANIA S.R.L.",
+  ];
+  const dateIntrari = [
+    "11-17-2022",
+    "11-17-2022",
+    "11-17-2022",
+    "11-21-2022",
+    "11-17-2022",
+    "11-24-2022",
+    "12-08-2022",
+    "12-08-2022",
+    "12-23-2022",
+    "12-23-2022",
+    "01-04-2023",
+    "01-20-2023",
+    "01-26-2023",
+    "01-26-2023",
+    "01-27-2023",
+    "02-08-2023",
+  ];
+  const raluri = [
+    "9005",
+    "9005",
+    "9003",
+    "7015",
+    "7016",
+    "7024",
+    "7016",
+    "7016",
+    "7016",
+    "7016",
+    "8017",
+    "7016",
+    "7012",
+    "7016",
+    "9005",
+    "7016",
+  ];
+  const cantitati = [
+    "20 kg",
+    "20 kg",
+    "25 kg",
+    "25 kg",
+    "25 kg",
+    "25 kg",
+    "25 kg",
+    "25 kg",
+    "25 kg",
+    "25.861 kg",
+    "25 kg",
+    "25 kg",
+    "10 kg",
+    "50 kg",
+    "25 kg",
+    "50 kg",
+  ];
+  for (var i = 0; i < furnizori.length; i++) {
+    const barcode =
+      Date.now() + "" + Math.floor(Math.random() * (999 - 100 + 1) + 100);
+    const newPaint = {
+      cantitate: cantitati[i],
+      furnizor: furnizori[i],
+      ral: raluri[i],
+      barcode: barcode,
+      dataIntrare: dateIntrari[i],
+      identificatorFurnizor: "",
+    };
+    const currentPaint = new Paint(newPaint);
+
+    const resPaint = await currentPaint.save();
+  }
+
+  res.status(200).json({
+    message: "Success!",
+  });
+};
+
 const getAllPaint = async (req, res) => {
   Paint.find().then((paint) => {
     if (paint && paint.length) {
+      res.status(200).json({
+        message: "Found!",
+        paint,
+      });
+    } else {
+      res.status(404).json({
+        message: "No paint found!",
+      });
+    }
+  });
+};
+
+const getPaint = async (req, res) => {
+  Paint.findOne({ barcode: req.params.id }).then((paint) => {
+    if (paint) {
       res.status(200).json({
         message: "Found!",
         paint,
@@ -89,4 +198,6 @@ module.exports = {
   createPaint,
   getAllPaint,
   testDoc,
+  createOldPaint,
+  getPaint,
 };

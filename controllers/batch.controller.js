@@ -6797,9 +6797,9 @@ const adaugaClientiVechi2 = async (req, res) => {
       },
       statusCurent:
         i == 0
-          ? "Primit"
+          ? "Receptionat"
           : i == 1
-          ? "Primit"
+          ? "Receptionat"
           : i == 2
           ? "Prevopsit"
           : i == 3

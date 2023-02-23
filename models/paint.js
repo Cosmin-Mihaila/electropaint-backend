@@ -4,6 +4,7 @@ const paintSchema = new mongoose.Schema(
   {
     barcode: String,
     dataIntrare: String,
+    dataIesire: String,
     ral: String,
     furnizor: String,
     cantitate: String,
