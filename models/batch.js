@@ -11,6 +11,7 @@ const batchSchema = new mongoose.Schema(
     lotFurnizor: String,
     cuptor: String,
     statusuri: Object,
+    defect: Boolean,
   },
   { collection: "batches" }
 );

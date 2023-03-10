@@ -4,7 +4,9 @@ const batchController = require("../controllers/batch.controller");
 
 router.post("/createbatch", batchController.createBatch);
 router.post("/updatebatch", batchController.updateBatch);
+router.post("/updatebatchdefect", batchController.updateBatchDefect);
 router.get("/getallbatches", batchController.getAllBatches);
+router.get("/getallbatchesdefecte", batchController.getAllBatchesDefecte);
 router.delete("/deletebatch", batchController.deleteBatch);
 router.get("/getbatch/:id", batchController.getBatch);
 router.get("/adaugaclientivechi", batchController.adaugaClientiVechi);

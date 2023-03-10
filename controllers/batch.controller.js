@@ -6672,23 +6672,23 @@ const adaugaClientiVechi = async (req, res) => {
         },
         prevopsit: {
           aplicat: true,
-          data: clientiVechi[i].client_delivery_time,
+          data: moment(clientiVechi[i].client_delivery_time).add(1, "d"),
           utilizator: "Admin",
         },
         vopsit: {
           aplicat: true,
-          data: clientiVechi[i].client_delivery_time,
+          data: moment(clientiVechi[i].client_delivery_time).add(2, "d"),
           durata: timpcor,
           utilizator: "Admin",
         },
         controlat: {
           aplicat: true,
-          data: clientiVechi[i].client_delivery_time,
+          data: moment(clientiVechi[i].client_delivery_time).add(3, "d"),
           utilizator: "Admin",
         },
         expediat: {
           aplicat: true,
-          data: clientiVechi[i].client_delivery_time,
+          data: moment(clientiVechi[i].client_delivery_time).add(4, "d"),
           utilizator: "Admin",
         },
       },
@@ -6753,7 +6753,18 @@ const adaugaClientiVechi2 = async (req, res) => {
               : i == 4
               ? true
               : true,
-          data: clientiVechi2[i].client_delivery_time,
+          data:
+            i == 0
+              ? "2023-02-21"
+              : i == 1
+              ? "2023-02-18"
+              : i == 2
+              ? "2023-02-17"
+              : i == 3
+              ? "2023-02-15"
+              : i == 4
+              ? "2023-02-15"
+              : "2023-02-14",
           utilizator: "Admin",
         },
         vopsit: {
@@ -6769,7 +6780,18 @@ const adaugaClientiVechi2 = async (req, res) => {
               : i == 4
               ? true
               : true,
-          data: clientiVechi2[i].client_delivery_time,
+          data:
+            i == 0
+              ? "2023-02-22"
+              : i == 1
+              ? "2023-02-19"
+              : i == 2
+              ? "2023-02-18"
+              : i == 3
+              ? "2023-02-16"
+              : i == 4
+              ? "2023-02-16"
+              : "2023-02-15",
           durata: timpcor,
           utilizator: "Admin",
         },
@@ -6786,12 +6808,34 @@ const adaugaClientiVechi2 = async (req, res) => {
               : i == 4
               ? false
               : true,
-          data: clientiVechi2[i].client_delivery_time,
+          data:
+            i == 0
+              ? "2023-02-23"
+              : i == 1
+              ? "2023-02-20"
+              : i == 2
+              ? "2023-02-19"
+              : i == 3
+              ? "2023-02-17"
+              : i == 4
+              ? "2023-02-17"
+              : "2023-02-16",
           utilizator: "Admin",
         },
         expediat: {
           aplicat: false,
-          data: clientiVechi2[i].client_delivery_time,
+          data:
+            i == 0
+              ? "2023-02-24"
+              : i == 1
+              ? "2023-02-21"
+              : i == 2
+              ? "2023-02-20"
+              : i == 3
+              ? "2023-02-18"
+              : i == 4
+              ? "2023-02-18"
+              : "2023-02-17",
           utilizator: "Admin",
         },
       },
@@ -6819,6 +6863,20 @@ const adaugaClientiVechi2 = async (req, res) => {
 
 const getAllBatches = async (req, res) => {
   Batch.find().then((batches) => {
+    if (batches && batches.length) {
+      res.status(200).json({
+        batches: "Found!",
+        batches,
+      });
+    } else {
+      res.status(404).json({
+        message: "No batches found!",
+      });
+    }
+  });
+};
+const getAllBatchesDefecte = async (req, res) => {
+  Batch.find({ defect: true }).then((batches) => {
     if (batches && batches.length) {
       res.status(200).json({
         batches: "Found!",
@@ -6886,6 +6944,28 @@ const updateBatch = async (req, res) => {
   });
 };
 
+const updateBatchDefect = async (req, res) => {
+  Batch.findOneAndUpdate(
+    { barcode: req.body.batch.barcode },
+    { defect: true },
+    {
+      new: true,
+    }
+  ).then((batch) => {
+    if (batch) {
+      console.log(batch);
+      res.status(200).json({
+        message: "Updated!",
+        batch,
+      });
+    } else {
+      res.status(404).json({
+        message: "No batches found!",
+      });
+    }
+  });
+};
+
 const deleteBatch = async (req, res) => {
   Batch.deleteOne({ barcode: req.body.id }).then((batch) => {
     if (batch) {
@@ -6926,4 +7006,6 @@ module.exports = {
   deleteAll,
   adaugaClientiVechi2,
   generateFormularReceptie,
+  getAllBatchesDefecte,
+  updateBatchDefect,
 };
