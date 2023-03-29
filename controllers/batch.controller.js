@@ -6594,7 +6594,7 @@ const generateFormularReceptie = async (req, res) => {
     data_receptie: bat.statusuri.primit.data,
     aviz: bat.aviz ? bat.aviz : "-",
     nume_produs: bat.numeProdus,
-    lot_furnizor: bat.lotFurnizor ? bat.lotFurnizor : "-",
+    lot_furnizor: bat.codProdus ? bat.codProdus : "-",
     cantitate: bat.cantitate,
     termen_livrare: new_date,
   });
@@ -6616,6 +6616,102 @@ const generateFormularReceptie = async (req, res) => {
   res.download(file);
 };
 
+const generateProcesVopsire = async (req, res) => {
+  const batchId = req.params.id;
+  const bat = await Batch.findOne({ barcode: batchId });
+  // Load the docx file as binary content
+  const content = fs.readFileSync(
+    path.resolve(__dirname, "proces_control_vopsire.docx"),
+    "binary"
+  );
+
+  const zip = new PizZip(content);
+
+  const doc = new Docxtemplater(zip, {
+    paragraphLoop: true,
+    linebreaks: true,
+  });
+
+  // Render the document (Replace {first_name} by John, {last_name} by Doe, ...)
+  var new_date = moment(bat.statusuri.vopsit.data, "YYYY-MM-DD").format(
+    "YYYY-MM-DD"
+  );
+  doc.render({
+    client: bat.numeCompanie,
+    observatii: bat.statusuri.controlat.observatii,
+    data_curenta: new_date,
+    grosime: bat.statusuri.controlat.grosimeStrat,
+    nume_produs: bat.numeProdus,
+    barcode: bat.barcode,
+  });
+
+  const buf = doc.getZip().generate({
+    type: "nodebuffer",
+    // compression: DEFLATE adds a compression step.
+    // For a 50MB output document, expect 500ms additional CPU time
+    compression: "DEFLATE",
+  });
+
+  // buf is a nodejs Buffer, you can either write it to a
+  // file or res.send it with express for example.
+  fs.writeFileSync(
+    path.resolve(__dirname, "Formular_receptie_" + bat.barcode + ".docx"),
+    buf
+  );
+  const file = `${__dirname}/Formular_receptie_${bat.barcode}.docx`;
+  res.download(file);
+};
+
+const generateInspectieFinala = async (req, res) => {
+  const batchId = req.params.id;
+  const bat = await Batch.findOne({ barcode: batchId });
+  // Load the docx file as binary content
+  const content = fs.readFileSync(
+    path.resolve(__dirname, "inspectie_finala.docx"),
+    "binary"
+  );
+
+  const zip = new PizZip(content);
+
+  const doc = new Docxtemplater(zip, {
+    paragraphLoop: true,
+    linebreaks: true,
+  });
+
+  // Render the document (Replace {first_name} by John, {last_name} by Doe, ...)
+  var new_date = moment(bat.statusuri.vopsit.data, "YYYY-MM-DD").format(
+    "YYYY-MM-DD"
+  );
+  doc.render({
+    client: bat.numeCompanie,
+    observatii: bat.statusuri.controlat.observatii,
+    data_curenta: new_date,
+    grosime: bat.statusuri.controlat.grosimeStrat,
+    nume_produs: bat.numeProdus,
+    numar_lot: bat.barcode,
+    v_etichete: bat.statusuri.goldenHand.v_etichete == true ? "OK" : "NU",
+    v_ambalare: bat.statusuri.goldenHand.v_ambalare == true ? "OK" : "NU",
+    v_numerica: bat.statusuri.goldenHand.v_numerica == true ? "OK" : "NU",
+    v_grosime: bat.statusuri.goldenHand.v_grosime == true ? "OK" : "NU",
+  });
+
+  const buf = doc.getZip().generate({
+    type: "nodebuffer",
+    // compression: DEFLATE adds a compression step.
+    // For a 50MB output document, expect 500ms additional CPU time
+    compression: "DEFLATE",
+  });
+
+  // buf is a nodejs Buffer, you can either write it to a
+  // file or res.send it with express for example.
+  fs.writeFileSync(
+    path.resolve(__dirname, "Golden_hand_" + bat.barcode + ".docx"),
+    buf
+  );
+  const file = `${__dirname}/Golden_hand_${bat.barcode}.docx`;
+  res.download(file);
+};
+
 const createBatch = async (req, res) => {
   const barcode =
     Date.now() + "" + Math.floor(Math.random() * (999 - 100 + 1) + 100);
@@ -6624,7 +6720,11 @@ const createBatch = async (req, res) => {
     numeProdus: req.body.numeProdus,
     ral: req.body.ral,
     barcode: barcode,
+    cantitate: req.body.cantitate,
     statusuri: req.body.statusuri,
+    codProdus: req.body.codProdus,
+    numarPiesa: req.body.numarPiesa,
+    termenLivrare: req.body.termenLivrare,
     statusCurent: "Receptionat",
   };
   const currentUser = new Batch(user);
@@ -6966,6 +7066,36 @@ const updateBatchDefect = async (req, res) => {
   });
 };
 
+const updateGoldenHand = async (req, res) => {
+  Batch.updateMany(
+    {},
+    {
+      $set: {
+        "statusuri.goldenHand": {
+          aplicat: true,
+          data: "29-03-2023",
+          utilizator: "Admin",
+        },
+      },
+    },
+    {
+      new: true,
+    }
+  ).then((batch) => {
+    if (batch) {
+      console.log(batch);
+      res.status(200).json({
+        message: "Updated!",
+        batch,
+      });
+    } else {
+      res.status(404).json({
+        message: "No batches found!",
+      });
+    }
+  });
+};
+
 const deleteBatch = async (req, res) => {
   Batch.deleteOne({ barcode: req.body.id }).then((batch) => {
     if (batch) {
@@ -7006,6 +7136,9 @@ module.exports = {
   deleteAll,
   adaugaClientiVechi2,
   generateFormularReceptie,
+  generateProcesVopsire,
   getAllBatchesDefecte,
   updateBatchDefect,
+  updateGoldenHand,
+  generateInspectieFinala,
 };

@@ -4,6 +4,8 @@ const batchSchema = new mongoose.Schema(
   {
     numeCompanie: String,
     numeProdus: String,
+    codProdus: String,
+    numarPiesa: String,
     ral: String,
     barcode: String,
     cantitate: String,
@@ -12,6 +14,8 @@ const batchSchema = new mongoose.Schema(
     cuptor: String,
     statusuri: Object,
     defect: Boolean,
+
+    termenLivrare: String,
   },
   { collection: "batches" }
 );
