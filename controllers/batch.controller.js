@@ -6721,6 +6721,7 @@ const createBatch = async (req, res) => {
     ral: req.body.ral,
     barcode: barcode,
     cantitate: req.body.cantitate,
+    unitate: req.body.unitate,
     statusuri: req.body.statusuri,
     codProdus: req.body.codProdus,
     numarPiesa: req.body.numarPiesa,
